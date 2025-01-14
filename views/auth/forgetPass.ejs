@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forget Password</title>
+    <link rel="stylesheet"  href="/css/auth.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+<div class="container">
+    <button id="themeToggle" title="Toggle Dark/Light Mode">
+        <i class="fas fa-moon" id="themeIcon" style="color: #FFD700;"></i>
+    </button>
+    
+    <h2>Forget Password</h2>
+    <form action="/login/forgetPass" method="POST">
+        <div class="form-group">
+            <input type="email" name="email" placeholder="Enter your email" required />
+        </div>
+        <button type="submit">Send Reset Link</button>
+
+        <% if (typeof errorMessage !== 'undefined') { %>
+            <div class="alert"><%= errorMessage %></div>
+        <% } %>
+
+        <p>Remembered your password? <a href="/login">Login here</a></p>
+    </form>
+</div>
+
+<script>
+// Theme toggle functionality
+document.getElementById('themeToggle').addEventListener('click', function() {
+    document.body.classList.toggle('dark-mode');
+    
+    const themeIcon = document.getElementById('themeIcon');
+
+    if (document.body.classList.contains('dark-mode')) {
+        themeIcon.classList.remove('fa-moon');
+        themeIcon.classList.add('fa-sun');
+        localStorage.setItem('theme', 'dark'); // Save theme preference
+    } else {
+        themeIcon.classList.remove('fa-sun');
+        themeIcon.classList.add('fa-moon');
+        localStorage.setItem('theme', 'light'); // Save theme preference
+    }
+});
+
+// Load saved theme on page load
+window.onload = function() {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+        document.body.classList.add('dark-mode');
+        document.getElementById('themeIcon').classList.remove('fa-moon');
+        document.getElementById('themeIcon').classList.add('fa-sun');
+    }
+};
+</script>
+
+</body>
+</html>

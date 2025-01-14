@@ -1,0 +1,82 @@
+<% if (!auth) { %>
+<div
+  class="modal fade"
+  id="loginModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="loginModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="loginModalLabel" style="padding-right: 160">
+          Login Required
+        </h5>
+      </div>
+      <div class="modal-body text-center">
+        <p style="font-size: 18px">
+          You must be logged in to access this page.
+        </p>
+        <a href="/login" class="btn btn-primary">Login</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Add event listeners to buttons
+  const cart = document.getElementById("cart");
+  const adminPo = document.getElementById("adminPo");
+  const addPo = document.getElementById("addPo");
+  const order = document.getElementById("order");
+
+
+  // Use let instead of const for mutable variable
+  let click = false;
+
+
+  document.addEventListener('DOMContentLoaded', () => {
+  const add = document.getElementById("add");
+
+  if (add) {
+    add.addEventListener("click", () => {
+      click = true;
+      localStorage.setItem('click', 'true');
+    });
+  }
+
+  // ... rest of your event listeners and logic
+});
+
+  cart.addEventListener("click", () => {
+    click = true;
+    localStorage.setItem("click", "true");
+  });
+
+  addPo.addEventListener("click", () => {
+    click = true;
+    localStorage.setItem("click", "true");
+  });
+
+  adminPo.addEventListener("click", () => {
+    click = true;
+    localStorage.setItem("click", "true");
+  });
+
+  order.addEventListener("click", () => {
+    click = true;
+    localStorage.setItem("click", "true");
+  });
+
+
+  // Show modal if click was registered and user is not authenticated
+  $(document).ready(function () {
+    if (localStorage.getItem("click") === "true") {
+      $("#loginModal").modal("show");
+      localStorage.removeItem("click"); // Clear after showing
+    }
+  });
+</script>
+
+<% } %>
