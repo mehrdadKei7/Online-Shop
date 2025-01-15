@@ -1,9 +1,9 @@
 <%- include('../includes/head.ejs') %> <%- include('../includes/heading.ejs') %>
 <%- include('../includes/navigation.ejs') %>
 
+<main >
+  <% if(products.length>0) { %>
 
-<main>
-  <% if(products.length>0) { %> 
   <ul class="cart__item-list">
     <% products.forEach(p => { %>
     <li class="cart__item">
@@ -30,10 +30,10 @@
     </div>
   </div>
 
-  <% } else{ %> 
+  <% } else{ %>
 
-    <h1>سبد خرید خالی است</h1>
-    <% } %> 
+  <h1>سبد خرید خالی است</h1>
+  <% } %>
 </main>
 
 <%- include('../includes/end.ejs') %>
