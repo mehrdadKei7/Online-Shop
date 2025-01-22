@@ -72,26 +72,29 @@ exports.getEditProduct = (req, res) => {
   });
 };
 
-exports.postEditProduct = (req, res) => {
+exports.postEditProduct = async (req, res) => {
   const prodId = req.body.productId;
   const updatedTitle = req.body.title;
   const updatedPrice = req.body.price;
   const updatedImageUrl = req.body.imageUrl;
   const updatedDesc = req.body.description;
 
-  Product.findById(prodId)
-    .then((product) => {
-      product.title = updatedTitle;
-      product.price = updatedPrice;
-      product.imageUrl = updatedImageUrl;
-      product.description = updatedDesc;
-      return product.save();
-    })
-    .then((result) => {
-      console.log("Updated Product...");
-      res.redirect("/");
-    });
+  try {
+ const product = Product.findOne({ _id: prodId, userId: req.user._id });
+
+  product.title = updatedTitle;
+  product.price = updatedPrice;
+  product.imageUrl = updatedImageUrl;
+  product.description = updatedDesc;
+
+  await product.save(); // Wait for the save operation to complete
+  console.log("Updated Product...");
+  res.redirect("/"); } catch (err) {
+    console.error(err);
+    res.status(500).send("An error occurred while updating the product");
+  }
 };
+
 
 exports.postDeleteProduct = (req, res) => {
   const prodId = req.body.productId;

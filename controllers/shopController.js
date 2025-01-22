@@ -48,9 +48,6 @@ exports.getDetails = (req, res) => {
 exports.postCart = (req, res) => {
   const prodId = req.body.productId;
 
-  // if (condition) {
-
-  // }
 
   Product.findById(prodId).then((product) => {
     req.user.addTocart(product);
@@ -82,36 +79,49 @@ exports.postCartDeleteProduct = (req, res) => {
     });
 };
 
-exports.postOrder = (req, res) => {
-  req.user
-    .populate("cart.items.productId")
-    .then((user) => {
-      const products = user.cart.items.map((i) => {
-        return {
-          quantity: i.quantity,
-          product: {
-            ...i.productId._doc,
-          },
-        };
-      });
-      const order = new Order({
-        user: {
-          name: req.user.lastName,
-          userId: req.user,
+exports.postOrder = async (req, res) => {
+  try {
+    // Populate cart items with product data
+    const user = await req.user.populate("cart.items.productId");
+
+    // Extract products from cart items
+    const products = user.cart.items.map((i) => {
+      if (!i.productId) {
+        // Handle missing product (e.g., log an error, remove the item from the cart)
+        console.error("Product not found in cart:", i._id);
+        return null; // Or skip this item
+      }
+      return {
+        quantity: i.quantity,
+        product: {
+          ...i.productId._doc,
         },
-        products: products,
-      });
-      return order.save();
-    })
-    .then(() => {
-      return req.user.clearCart();
-    })
-    .then(() => {
-      res.redirect("/orders");
-    })
-    .catch((err) => {
-      console.log(err);
+      };
     });
+
+    // Filter out any null products (if handling missing products)
+    const filteredProducts = products.filter((product) => product !== null);
+
+    // Create a new order
+    const order = new Order({
+      user: {
+        name: req.user.lastName,
+        userId: req.user,
+      },
+      products: filteredProducts,
+    });
+
+    // Save the order
+    await order.save();
+
+    // Clear user's cart
+    await req.user.clearCart();
+
+    // Redirect to orders page
+    res.redirect("/orders");
+  } catch (err) {
+    console.error(err);
+  }
 };
 
 exports.getOrder = (req, res) => {

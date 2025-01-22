@@ -15,6 +15,7 @@
 
     <h2>Set New Password</h2>
     <form action="/login/newPass" method="POST">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
         <div class="form-group password-group">
             <input type="password" name="password" placeholder="New Password" id="newPassword" required />
             <span id="toggleNewPassword" style="cursor:pointer;">

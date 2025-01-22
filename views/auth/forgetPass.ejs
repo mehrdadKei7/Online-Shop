@@ -15,6 +15,7 @@
     
     <h2>Forget Password</h2>
     <form action="/login/forgetPass" method="POST">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
         <div class="form-group">
             <input type="email" name="email" placeholder="Enter your email" required />
         </div>

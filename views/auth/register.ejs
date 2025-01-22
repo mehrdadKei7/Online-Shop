@@ -18,6 +18,7 @@
 
    <!-- Registration Form -->
    <form action='/register' method='POST'>
+         <input type='hidden' name='_csrf' value='<%= csrfToken %>'>
        <!-- First Name -->
        <div class='form-group'>
            <input type='text' name='firstName' placeholder='First Name' value="<%= typeof firstName !== 'undefined' ? firstName : '' %>" required />

@@ -3,7 +3,7 @@ const router = express.Router();
 const adminController = require('../controllers/adminController');
 const authController = require('../controllers/authController');
 
-// Protect all admin routes with authentication
+
 router.use(authController.authentication);
 
 router.get('/addProduct', adminController.getAddProductPage);
