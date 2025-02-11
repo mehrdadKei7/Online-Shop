@@ -2,8 +2,10 @@
 <%- include('./includes/navigation.ejs') %>
 
 <main>
-  <h1>محصول مورد نظر یافت نشد</h1>
-  <p>لطفا دوباره تلاش کنید.</p>
+  <div class="container">
+    <h1>خطا</h1>
+    <p><%= errorMessage %></p>
+  </div>
 </main>
 
 <%- include('./includes/end.ejs') %>

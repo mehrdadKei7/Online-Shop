@@ -5,11 +5,42 @@ const mongoose = require("mongoose");
 const session = require("express-session");
 const User = require("./models/userModel");
 const csrf = require("csurf");
+const multer = require("multer");
+const errorController = require("./controllers/error");
 
 const app = express();
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
+app.use("/images", express.static(path.join(__dirname, "images")));
+
+const fileStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "images");
+  },
+  filename: (req, file, cb) => {
+    cb(
+      null,
+      new Date().toISOString().replace(/:/g, "-") + "-" + file.originalname
+    );
+  },
+});
+
+const fileFilter = (req, file, cb) => {
+  if (
+    file.mimetype === "image/png" ||
+    file.mimetype === "image/jpg" ||
+    file.mimetype === "image/jpeg"
+  ) {
+    cb(null, true);
+  } else {
+    cb(null, false);
+  }
+};
+
+app.use(
+  multer({ storage: fileStorage, fileFilter: fileFilter }).single("image")
+);
 
 app.use(
   session({
@@ -53,6 +84,12 @@ app.use((req, res, next) => {
 app.use("/admin", adminRouter);
 app.use(shopRouter);
 app.use(authRouter);
+
+app.use((err, req, res, next) => {
+  res.redirect("/error");
+});
+
+app.get("/error", errorController.getError);
 
 mongoose
   .connect("mongodb://localhost/Shop")

@@ -1,30 +1,42 @@
 const Product = require("../models/productModel");
 const Order = require("../models/order");
 
-exports.getProductsList = (req, res) => {
-  Product.find().then((products) => {
-    res.render("shop/product-list", {
-      prods: products,
-      pageTitle: "All Products",
-      path: "/products-list",
+exports.getProductsList = (req, res, next) => {
+  try {
+    Product.find().then((products) => {
+      res.render("shop/product-list", {
+        prods: products,
+        pageTitle: "All Products",
+        path: "/products-list",
+      });
     });
-  });
+  } catch (err) {
+    const error = new Error(err);
+    error.httpStatusCode = 500;
+    return next(error);
+  }
 };
 
-exports.getIndex = (req, res) => {
-  Product.find().then((product) => {
-    res.render("shop/index", {
-      path: "/",
-      pageTitle: "Shop",
-      prods: product,
+exports.getIndex = (req, res, next) => {
+  try {
+    Product.find().then((product) => {
+      res.render("shop/index", {
+        path: "/",
+        pageTitle: "Shop",
+        prods: product,
+      });
     });
-  });
+  } catch (err) {
+    const error = new Error(err);
+    error.httpStatusCode = 500;
+    return next(error);
+  }
 };
 
-exports.getDetails = (req, res) => {
-  const prodId = req.params.productId;
-  Product.findById(prodId)
-    .then((product) => {
+exports.getDetails = (req, res, next) => {
+  try {
+    const prodId = req.params.productId;
+    Product.findById(prodId).then((product) => {
       if (!product) {
         // Handle the case where the product is not found
         return res.status(404).render("404", {
@@ -38,48 +50,61 @@ exports.getDetails = (req, res) => {
         pageTitle: product.title, // Use title instead of pageTitle
         path: "/products",
       });
-    })
-    .catch((err) => {
-      console.error(err);
-      res.status(500);
     });
+  } catch (err) {
+    const error = new Error(err);
+    error.httpStatusCode = 500;
+    return next(error);
+  }
 };
 
-exports.postCart = (req, res) => {
-  const prodId = req.body.productId;
+exports.postCart = (req, res, next) => {
+  try {
+    const prodId = req.body.productId;
 
-
-  Product.findById(prodId).then((product) => {
-    req.user.addTocart(product);
-    res.redirect("/cart");
-  });
-};
-
-exports.getCart = async (req, res) => {
-  const user = await req.user.populate("cart.items.productId");
-  const filteredProducts = user.cart.items.filter(
-    (item) => item.productId !== null
-  );
-  res.render("shop/cart", {
-    pageTitle: "Cart",
-    path: "/cart",
-    products: filteredProducts,
-  });
-};
-
-exports.postCartDeleteProduct = (req, res) => {
-  const prodId = req.body.productId;
-  req.user
-    .removeFromCart(prodId)
-    .then((result) => {
+    Product.findById(prodId).then((product) => {
+      req.user.addTocart(product);
       res.redirect("/cart");
-    })
-    .catch((err) => {
-      console.log(err);
     });
+  } catch (err) {
+    const error = new Error(err);
+    error.httpStatusCode = 500;
+    return next(error);
+  }
 };
 
-exports.postOrder = async (req, res) => {
+exports.getCart = async (req, res, next) => {
+  try {
+    const user = await req.user.populate("cart.items.productId");
+    const filteredProducts = user.cart.items.filter(
+      (item) => item.productId !== null
+    );
+    res.render("shop/cart", {
+      pageTitle: "Cart",
+      path: "/cart",
+      products: filteredProducts,
+    });
+  } catch (err) {
+    const error = new Error(err);
+    error.httpStatusCode = 500;
+    return next(error);
+  }
+};
+
+exports.postCartDeleteProduct = (req, res, next) => {
+  try {
+    const prodId = req.body.productId;
+    req.user.removeFromCart(prodId).then((result) => {
+      res.redirect("/cart");
+    });
+  } catch (err) {
+    const error = new Error(err);
+    error.httpStatusCode = 500;
+    return next(error);
+  }
+};
+
+exports.postOrder = async (req, res, next) => {
   try {
     // Populate cart items with product data
     const user = await req.user.populate("cart.items.productId");
@@ -120,22 +145,26 @@ exports.postOrder = async (req, res) => {
     // Redirect to orders page
     res.redirect("/orders");
   } catch (err) {
-    console.error(err);
+    const error = new Error(err);
+    error.httpStatusCode = 500;
+    return next(error);
   }
 };
 
-exports.getOrder = (req, res) => {
-  Order.find({
-    "user.userId": req.user._id,
-  })
-    .then((orders) => {
+exports.getOrder = (req, res, next) => {
+  try {
+    Order.find({
+      "user.userId": req.user._id,
+    }).then((orders) => {
       res.render("shop/orders", {
         pageTitle: "Orders",
         path: "/orders",
         orders: orders,
       });
-    })
-    .catch((err) => {
-      console.log(err);
     });
+  } catch (err) {
+    const error = new Error(err);
+    error.httpStatusCode = 500;
+    return next(error);
+  }
 };

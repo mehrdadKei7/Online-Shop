@@ -73,10 +73,21 @@ userSchema.methods.addTocart = function (product) {
 };
 
 userSchema.methods.removeFromCart = function (productId) {
-  const updatedcartItems = this.cart.items.filter((item) => {
-    return item.productId.toString() !== productId.toString();
-  });
-  this.cart.items = updatedcartItems;
+  const specificItem = this.cart.items.find(
+    (item) => item.productId.toString() === productId.toString()
+  );
+
+  if (!specificItem) {
+    return this;
+  }
+
+  if (specificItem.quantity > 1) {
+    specificItem.quantity -= 1;
+  } else {
+    this.cart.items = this.cart.items.filter(
+      (item) => item.productId.toString() !== productId.toString()
+    );
+  }
   return this.save();
 };
 

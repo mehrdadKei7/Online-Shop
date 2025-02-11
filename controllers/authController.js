@@ -17,57 +17,73 @@ function isValidPassword(password) {
 // authController.js
 exports.authentication = (req, res, next) => {
   if (!req.session.userId) {
-    return res.redirect('/'); // Redirect to home page
+    return res.redirect("/"); // Redirect to home page
   }
-  
+
   next(); // Proceed to the next middleware/route handler if authenticated
 };
 
 exports.checkAuth = (req, res, next) => {
-    if (!req.session.userId) {
-      res.locals.auth = false; // User is not authenticated
-    } else {
-      res.locals.auth = true; // User is authenticated
-    }
-    
-    next(); // Proceed to the next middleware or route handler
-  };
+  if (!req.session.userId) {
+    res.locals.auth = false; // User is not authenticated
+  } else {
+    res.locals.auth = true; // User is authenticated
+  }
 
-
-
-
-exports.getLoginPage = (req, res) => {
-  res.render("auth/login");
+  next(); // Proceed to the next middleware or route handler
 };
 
-exports.postLogin = async (req, res) => {
+exports.getLoginPage = (req, res, next) => {
   try {
-      const { email, password } = req.body;
-
-      if (!email || !password) {
-          return res.render("auth/login", {
-              errorMessage: "All fields are required.",
-              email,
-              password,
-          });
-      }
-
-      const loginUser = await User.findOne({ email });
-
-      if (!loginUser || !loginUser.isVerifiedEmail || !bcrypt.compareSync(password, loginUser.password)) {
-          return res.render("auth/login", { errorMessage: "Invalid credentials or email not verified." });
-      }
-
-      req.session.userId = loginUser._id; // Store user ID in session
-      return res.redirect("/"); // Redirect to dashboard or home page
-  } catch (error) {
-      console.error("Error during login:", error);
-      res.render("auth/login", { errorMessage: "An error occurred during login." });
+    res.render("auth/login");
+  } catch (err) {
+    const error = new Error(err);
+    error.httpStatusCode = 500;
+    return next(error);
   }
 };
 
-exports.getForgetPassPage = (req, res) => {
-  res.render("auth/forgetPass");
+exports.postLogin = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.render("auth/login", {
+        errorMessage: "All fields are required.",
+        email,
+        password,
+      });
+    }
+
+    const loginUser = await User.findOne({ email });
+
+    if (
+      !loginUser ||
+      !loginUser.isVerifiedEmail ||
+      !bcrypt.compareSync(password, loginUser.password)
+    ) {
+      return res.render("auth/login", {
+        errorMessage: "Invalid credentials or email not verified.",
+      });
+    }
+
+    req.session.userId = loginUser._id; // Store user ID in session
+    return res.redirect("/"); // Redirect to dashboard or home page
+  } catch (err) {
+    const error = new Error(err);
+    error.httpStatusCode = 500;
+    return next(error);
+  }
+};
+
+exports.getForgetPassPage = (req, res, next) => {
+  try {
+    res.render("auth/forgetPass");
+  } catch (err) {
+    const error = new Error(err);
+    error.httpStatusCode = 500;
+    return next(error);
+  }
 };
 
 exports.postForgetPass = async (req, res) => {
@@ -203,8 +219,14 @@ exports.postNewPass = async (req, res) => {
   }
 };
 
-exports.getRegisterPage = (req, res) => {
-  return res.render("auth/register");
+exports.getRegisterPage = (req, res,next) => {
+  try {
+    return res.render("auth/register");
+  } catch (err) {
+    const error = new Error(err);
+    error.httpStatusCode = 500;
+    return next(error);
+  }
 };
 
 exports.postRegisterUser = async (req, res) => {
