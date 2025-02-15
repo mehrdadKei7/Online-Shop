@@ -1,22 +1,25 @@
 <%- include('../includes/head.ejs') %> <%- include('../includes/heading.ejs') %>
 <%- include('../includes/navigation.ejs') %>
 
-<main >
+<main>
   <% if(orders.length<=0) { %>
   <h2>سفارشی ثبت نشده</h2>
   <% } else{ %>
   <ul class="orders">
     <% orders.forEach(order=> { %>
     <li class="orders_item">
-      <h1>سفارش - <%= order._id %></h1>
+      <h1>شماره سفارش: <%= order._id %></h1>
       <ul class="orders_products">
         <% order.products.forEach(p=>{ %>
         <li class="orders_products_item">
-          <%= p.product.title %> <br> ( <%= p.quantity %> )
+          <p> نام کالا: <%= p.product.title %></p>
+          <p> تعداد: <%= p.quantity %> </p>
+          <p>شناسه تراکنش: <%= order.refId %></p>
         </li>
 
         <% }); %>
       </ul>
+      <a href="/orders/<%= order._id %>/invoice" class="btn">دانلود فاکتور</a>
     </li>
 
     <% }); %>

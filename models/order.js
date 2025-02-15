@@ -25,7 +25,11 @@ const orderSchema = new Schema({
             required: true,
             ref: 'User'
         }
-    }
+    },
+    refId: {
+        type: String,
+        required: true,
+      },
 
 
 

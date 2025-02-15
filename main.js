@@ -64,6 +64,7 @@ app.set("views", "views");
 const adminRouter = require("./routes/adminRouter");
 const shopRouter = require("./routes/shopRouter");
 const authRouter = require("./routes/authRouter");
+const paymentRouter = require("./routes/paymentRouter");
 
 app.use((req, res, next) => {
   if (!req.session.userId) {
@@ -84,6 +85,7 @@ app.use((req, res, next) => {
 app.use("/admin", adminRouter);
 app.use(shopRouter);
 app.use(authRouter);
+app.use(paymentRouter);
 
 app.use((err, req, res, next) => {
   res.redirect("/error");

@@ -1,47 +1,87 @@
+<%- include('../includes/head.ejs') %> <%- include('../includes/heading.ejs') %>
+<%- include('../includes/navigation.ejs') %>
 
-    <%- include('../includes/head.ejs') %>
- 
-
-    <%- include('../includes/heading.ejs') %>
- 
-
-    <%- include('../includes/navigation.ejs') %>
-   
-
-
-
-
-    <main >
-      <% if(prods.length > 0) { %> 
-      <div class="grid">
-        <% for(let product of prods) { %> 
-        <article class="card product-item">
-          <header class="card__header">
-            <h1 class="product__title"><%= product.title  %> </h1>
-          </header>
-          <div class="card__image">
-            <img src="/<%= product.imageUrl %> " alt="Product Title" />
-          </div>
-          <div class="card__content">
-            <h2 class="product__price"><%= product.price %></h2>
-            <p class="product__description"><%= product.description %> </p>
-          </div>
-          <div class="card__actions">
-            <a href="/admin/edit-product/<%= product._id %>?edit=true" class="btn btn-warning">ویرایش</a>
-            <form action="/admin/delete-product" method="post">
-              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-              <input type="hidden" value="<%= product._id %>" name="productId">
-              <button class="btn btn-danger" type="submit">حذف</button>
-            </form>
-          </div>
-        </article>
-        <% } %> 
+<main>
+  <% if(prods.length > 0) { %>
+  <div class="grid">
+    <% for(let product of prods) { %>
+    <article class="card product-item">
+      <header class="card__header">
+        <h1 class="product__title"><%= product.title %></h1>
+      </header>
+      <div class="card__image">
+        <img src="/<%= product.imageUrl %> " alt="Product Title" />
       </div>
-      <% } else {  %> 
-        <h1>محصولی یافت نشد ... !!!</h1>
-        <% } %> 
-    </main>
+      <div class="card__content">
+        <h2 class="product__price"><%= product.price %></h2>
+        <p class="product__description"><%= product.description %></p>
+      </div>
+      <div class="card__actions">
+        <a
+          href="/admin/edit-product/<%= product._id %>?edit=true"
+          class="btn btn-warning"
+          >ویرایش</a
+        >
+        <form action="/admin/delete-product" method="post">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+          <input type="hidden" value="<%= product._id %>" name="productId" />
+          <button class="btn btn-danger" type="submit">حذف</button>
+        </form>
+      </div>
+    </article>
+    <% } %>
+  </div>
+  <% } else { %>
+  <h1>محصولی یافت نشد ... !!!</h1>
+  <% } %>
 
-
-    <%- include('../includes/end.ejs') %>
  
+  <nav aria-label="Page navigation">
+    <ul class="pagination justify-content-center">
+      <% if (hasPreviousPage) { %>
+      <li class="page-item">
+        <a class="page-link" href="/admin/products?page=<%= previousPage %>">Previous</a>
+      </li>
+      <% } else { %>
+      <li class="page-item disabled">
+        <span class="page-link">Previous</span>
+      </li>
+      <% } %>
+
+      <% if (currentPage > 1) { %>
+      <li class="page-item">
+        <a class="page-link" href="/admin/products?page=<%= currentPage - 1 %>"><%= currentPage - 1 %></a>
+      </li>
+      <% } %>
+
+      <li class="page-item active">
+        <span class="page-link"><%= currentPage %></span>
+      </li>
+
+      <% if (currentPage < lastPage) { %>
+      <li class="page-item">
+        <a class="page-link" href="/admin/products?page=<%= currentPage + 1 %>"><%= currentPage + 1 %></a>
+      </li>
+      <% } else { %>
+      <li class="page-item disabled">
+        <span class="page-link"><%= currentPage + 1 %></span>
+      </li>
+      <% } %>
+
+      <% if (hasNextPage) { %>
+      <li class="page-item">
+        <a class="page-link" href="/admin/products?page=<%= nextPage %>">Next</a>
+      </li>
+      <li class="page-item">
+        <a class="page-link" href="/admin/products?page=<%= lastPage %>">Last</a>
+      </li>
+      <% } else { %>
+      <li class="page-item disabled">
+        <span class="page-link">Next</span>
+      </li>
+      <% } %>
+    </ul>
+  </nav>
+</main>
+
+<%- include('../includes/end.ejs') %>

@@ -1,9 +1,8 @@
 <%- include('../includes/head.ejs') %> <%- include('../includes/heading.ejs') %>
 <%- include('../includes/navigation.ejs') %>
 
-<main >
+<main>
   <% if(products.length>0) { %>
-
   <ul class="cart__item-list">
     <% products.forEach(p => { %>
     <li class="cart__item">
@@ -12,8 +11,9 @@
       </div>
       <h1><%= p.productId.title %></h1>
       <h2><%= p.quantity %></h2>
-      <form action="/cart-delete-item" method="post">
-        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <h1>قیمت هر عدد: <%= p.productId.price %> تومان</h1>
+      <form action="/create-payment" method="post">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
         <button type="submit" class="btn btn-danger">حذف</button>
         <input type="hidden" value="<%= p.productId._id %>" name="productId" />
       </form>
@@ -24,9 +24,9 @@
   <div class="row">
     <div class="container">
       <div class="centered">
-        <form action="/create-order" method="post">
-          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-          <button type="submit" class="btn btn-info">سفارش محصولات</button>
+        <form action="/create-payment" method="post">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+          <button type="submit" class="btn btn-info">پرداخت </button>
         </form>
       </div>
     </div>

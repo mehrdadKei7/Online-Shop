@@ -3,7 +3,6 @@
 include('../includes/loginModal.ejs', {auth:auth}) %>
 
 <main class="shop">
-
   <% if(prods.length > 0) { %>
   <div class="grid">
     <% for(let product of prods) { %>
@@ -27,6 +26,55 @@ include('../includes/loginModal.ejs', {auth:auth}) %>
   <% } else { %>
   <h1>محصولی یافت نشد ... !!!</h1>
   <% } %>
+
+ 
+  <nav aria-label="Page navigation">
+    <ul class="pagination justify-content-center">
+      <% if (hasPreviousPage) { %>
+      <li class="page-item">
+        <a class="page-link" href="/?page=<%= previousPage %>">Previous</a>
+      </li>
+      <% } else { %>
+      <li class="page-item disabled">
+        <span class="page-link">Previous</span>
+      </li>
+      <% } %>
+
+      <% if (currentPage > 1) { %>
+      <li class="page-item">
+        <a class="page-link" href="/?page=<%= currentPage - 1 %>"><%= currentPage - 1 %></a>
+      </li>
+      <% } %>
+
+      <li class="page-item active">
+        <span class="page-link"><%= currentPage %></span>
+      </li>
+
+      <% if (currentPage < lastPage) { %>
+      <li class="page-item">
+        <a class="page-link" href="/?page=<%= currentPage + 1 %>"><%= currentPage + 1 %></a>
+      </li>
+      <% } else { %>
+      <li class="page-item disabled">
+        <span class="page-link"><%= currentPage + 1 %></span>
+      </li>
+      <% } %>
+
+      <% if (hasNextPage) { %>
+      <li class="page-item">
+        <a class="page-link" href="/?page=<%= nextPage %>">Next</a>
+      </li>
+    
+      <li class="page-item">
+        <a class="page-link" href="/?page=<%= lastPage %>"> Last </a>
+      </li>
+      <% } else { %>
+      <li class="page-item disabled">
+        <span class="page-link">Next</span>
+      </li>
+      <% } %>
+    </ul>
+  </nav>
 </main>
 
 <%- include('../includes/end.ejs') %>

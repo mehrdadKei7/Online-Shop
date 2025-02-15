@@ -2,23 +2,41 @@ const Product = require("../models/productModel");
 const fs = require("fs");
 const path = require("path");
 
+const ITEMS_PER_PAGE = 12;
+
 exports.getAdminProducts = (req, res, next) => {
+  const page = +req.query.page || 1;
+  let totalItems;
+
   Product.find({ userId: req.user._id })
+    .countDocuments()
+    .then((numProducts) => {
+      totalItems = numProducts;
+      return Product.find({ userId: req.user._id })
+        .skip((page - 1) * ITEMS_PER_PAGE)
+        .limit(ITEMS_PER_PAGE);
+    })
     .then((products) => {
       res.render("admin/products", {
         prods: products,
         pageTitle: "Admin Products",
         path: "/admin/products",
+        currentPage: page,
+        hasNextPage: ITEMS_PER_PAGE * page < totalItems,
+        hasPreviousPage: page > 1,
+        nextPage: page + 1,
+        previousPage: page - 1,
+        lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE),
       });
     })
-    .catch((err) => {
-      const error = new Error(err);
-      error.httpStatusCode = 500;
-      return next(error);
-    });
+  .catch((err) => {
+    const error = new Error(err);
+    error.httpStatusCode = 500;
+    return next(error);
+  });
 };
 
-exports.getAddProductPage = (req, res,next) => {
+exports.getAddProductPage = (req, res, next) => {
   try {
     res.render("admin/addProduct.ejs", {
       path: "/admin/addProduct",
@@ -32,7 +50,7 @@ exports.getAddProductPage = (req, res,next) => {
   }
 };
 
-exports.postAddProduct = (req, res,next) => {
+exports.postAddProduct = (req, res, next) => {
   try {
     const title = req.body.title;
     const price = req.body.price;
@@ -73,7 +91,7 @@ exports.postAddProduct = (req, res,next) => {
   }
 };
 
-exports.getEditProduct = (req, res,next) => {
+exports.getEditProduct = (req, res, next) => {
   try {
     const editMode = req.query.edit;
     if (!editMode) {
@@ -99,7 +117,7 @@ exports.getEditProduct = (req, res,next) => {
   }
 };
 
-exports.postEditProduct = async (req, res,next) => {
+exports.postEditProduct = async (req, res, next) => {
   try {
     const prodId = req.body.productId;
     const updatedTitle = req.body.title;
@@ -140,28 +158,26 @@ exports.postEditProduct = async (req, res,next) => {
   }
 };
 
-exports.postDeleteProduct = (req, res,next) => {
+exports.postDeleteProduct = async (req, res, next) => {
   try {
     const prodId = req.body.productId;
-    Product.findById(prodId)
-      .then((product) => {
-        if (!product) {
-          return res.redirect("/admin/products");
-        }
+    const user = req.user;
+    const product = await Product.findOne({ _id: prodId, userId: user._id });
 
-        const imagePath = path.join(__dirname, "..", product.imageUrl);
-        fs.unlink(imagePath, (err) => {
-          if (err) {
-            console.error("Failed to delete the image:", err);
-          }
-        });
+    if (!product) {
+      return res.redirect("/admin/products");
+    }
 
-        return Product.findByIdAndDelete(prodId);
-      })
-      .then(() => {
-        console.log("Product Removed");
-        res.redirect("/admin/products");
-      });
+    const imagePath = path.join(__dirname, "..", product.imageUrl);
+    fs.unlink(imagePath, (err) => {
+      if (err) {
+        console.error("Failed to delete the image:", err);
+      }
+    });
+
+    await Product.findByIdAndDelete(prodId);
+    console.log("Product Removed");
+    res.redirect("/admin/products");
   } catch (err) {
     const error = new Error(err);
     error.httpStatusCode = 500;
