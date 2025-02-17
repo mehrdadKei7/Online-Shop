@@ -1,9 +1,8 @@
 <%- include('../includes/head.ejs') %> <%- include('../includes/heading.ejs') %>
-<%- include('../includes/navigation.ejs') %> 
-
+<%- include('../includes/navigation.ejs') %>
 <%-include('../includes/loginModal.ejs', {auth:auth}) %>
 
-<main class="shop" >
+<main class="shop">
   <% if(prods.length > 0) { %>
   <div class="grid">
     <% for(let product of prods) { %>
@@ -21,9 +20,7 @@
       <div class="card__actions">
         <a href="/products/<%= product._id %>" class="btn btn-light">جزئیات</a>
 
-  
-          <%- include('../includes/add-to-cart.ejs',{product:product}) %>
-        
+        <%- include('../includes/add-to-cart.ejs',{product:product}) %>
       </div>
     </article>
     <% } %>
@@ -32,22 +29,23 @@
   <h1>محصولی یافت نشد ... !!!</h1>
   <% } %>
 
- 
   <nav aria-label="Page navigation">
     <ul class="pagination justify-content-center">
       <% if (hasPreviousPage) { %>
       <li class="page-item">
-        <a class="page-link" href="/products-list?page=<%= previousPage %>">Previous</a>
+        <a class="page-link" href="/products-list?page=<%= previousPage %>"
+          >Previous</a
+        >
       </li>
       <% } else { %>
       <li class="page-item disabled">
         <span class="page-link">Previous</span>
       </li>
-      <% } %>
-
-      <% if (currentPage > 1) { %>
+      <% } %> <% if (currentPage > 1) { %>
       <li class="page-item">
-        <a class="page-link" href="/products-list?page=<%= currentPage - 1 %>"><%= currentPage - 1 %></a>
+        <a class="page-link" href="/products-list?page=<%= currentPage - 1 %>"
+          ><%= currentPage - 1 %></a
+        >
       </li>
       <% } %>
 
@@ -57,21 +55,23 @@
 
       <% if (currentPage < lastPage) { %>
       <li class="page-item">
-        <a class="page-link" href="/products-list?page=<%= currentPage + 1 %>"><%= currentPage + 1 %></a>
+        <a class="page-link" href="/products-list?page=<%= currentPage + 1 %>"
+          ><%= currentPage + 1 %></a
+        >
       </li>
       <% } else { %>
       <li class="page-item disabled">
         <span class="page-link"><%= currentPage + 1 %></span>
       </li>
-      <% } %>
-
-      <% if (hasNextPage) { %>
+      <% } %> <% if (hasNextPage) { %>
       <li class="page-item">
         <a class="page-link" href="/products-list?page=<%= nextPage %>">Next</a>
       </li>
-    
+
       <li class="page-item">
-        <a class="page-link" href="/products-list?page=<%= lastPage %>"> Last </a>
+        <a class="page-link" href="/products-list?page=<%= lastPage %>">
+          Last
+        </a>
       </li>
       <% } else { %>
       <li class="page-item disabled">
@@ -82,5 +82,18 @@
   </nav>
 </main>
 
-
 <%- include('../includes/end.ejs') %>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has("addedToCart")) {
+      const successMessage = document.getElementById("success-message");
+      if (successMessage) {
+        setTimeout(() => {
+          successMessage.style.display = "none";
+        }, 2000); // Adjust the timeout as needed
+      }
+    }
+  });
+</script>

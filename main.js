@@ -87,9 +87,9 @@ app.use(shopRouter);
 app.use(authRouter);
 app.use(paymentRouter);
 
-app.use((err, req, res, next) => {
-  res.redirect("/error");
-});
+// app.use((err, req, res, next) => {
+//   res.redirect("/error");
+// });
 
 app.get("/error", errorController.getError);
 

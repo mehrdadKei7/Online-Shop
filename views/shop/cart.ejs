@@ -12,7 +12,7 @@
       <h1><%= p.productId.title %></h1>
       <h2><%= p.quantity %></h2>
       <h1>قیمت هر عدد: <%= p.productId.price %> تومان</h1>
-      <form action="/create-payment" method="post">
+      <form action="/cart-delete-item" method="post">
         <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
         <button type="submit" class="btn btn-danger">حذف</button>
         <input type="hidden" value="<%= p.productId._id %>" name="productId" />
@@ -26,7 +26,7 @@
       <div class="centered">
         <form action="/create-payment" method="post">
           <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
-          <button type="submit" class="btn btn-info">پرداخت </button>
+          <button type="submit" class="btn btn-info">پرداخت</button>
         </form>
       </div>
     </div>

@@ -368,3 +368,18 @@ exports.dashboardPage = async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 };
+
+exports.logout = (req, res) => {
+  try {
+  req.session.destroy((err) => {
+    if (err) {
+      return res.redirect("/"); // Redirect to home page
+    }
+
+    res.clearCookie("sid"); // Clear the session cookie
+    res.redirect("/login"); // Redirect to login page
+  })}catch (error) {
+    console.error("Error retrieving user:", error);
+    res.status(500).send("Internal Server Error");
+  }
+};

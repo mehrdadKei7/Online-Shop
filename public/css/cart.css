@@ -30,3 +30,9 @@
 .cart__item button{
     margin-top:20px;
 }
+
+.success-message {
+    display: inline-block;  /* Or width: fit-content; */
+    padding: 0.5rem 1rem;
+   
+  }

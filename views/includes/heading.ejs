@@ -1,1 +1,17 @@
-<div class="jumbotron jumbotron-fluid"></div>
+<!-- <div class="jumbotron jumbotron-fluid">
+  <% if (typeof addedToCart !== 'undefined') { %>
+  <div class="alert alert-success success-message" id="success-message">
+    Product added to cart successfully
+  </div>
+
+  <% } %>
+</div> -->
+
+
+<div class="jumbotron jumbotron-fluid">
+    <% if (typeof addedToCart !== 'undefined') { %>
+        <div class="d-flex justify-content-center"> <div class="alert alert-success success-message" id="success-message">
+            Product added to cart successfully
+        </div></div>
+    <% } %>
+</div>

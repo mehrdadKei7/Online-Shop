@@ -13,5 +13,6 @@ router.get('/login/forgetPass', authController.getForgetPassPage);
 router.post('/login/forgetPass', authController.postForgetPass);
 router.get('/login/newPass/:token', authController.getNewPassPage);
 router.post('/login/newPass', authController.postNewPass);
+router.get('/logout', authController.logout);
 
 module.exports = router;

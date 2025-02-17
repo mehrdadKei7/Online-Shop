@@ -29,11 +29,11 @@ exports.getAdminProducts = (req, res, next) => {
         lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE),
       });
     })
-  .catch((err) => {
-    const error = new Error(err);
-    error.httpStatusCode = 500;
-    return next(error);
-  });
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 exports.getAddProductPage = (req, res, next) => {
@@ -133,6 +133,26 @@ exports.postEditProduct = async (req, res, next) => {
     if (!product) {
       return res.redirect("/admin/products");
     }
+
+    if (!updatedTitle || !updatedPrice || !updatedDesc) {
+      return res.render("admin/addProduct", {
+        path: "admin/edit-product",
+        pageTitle: "addProduct",
+        editing: true,
+        errorMessage: "All fields are required.",
+        title: updatedTitle,
+        price: updatedPrice,
+        description: updatedDesc,
+        product: {
+          _id: prodId,
+          title: updatedTitle,
+          price: updatedPrice,
+          description: updatedDesc,
+          imageUrl: updatedImage ? updatedImage.path : product.imageUrl,
+        },
+      });
+    }
+
     product.title = updatedTitle;
     product.price = updatedPrice;
     product.description = updatedDesc;

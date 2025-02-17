@@ -8,6 +8,7 @@ const ITEMS_PER_PAGE = 8;
 
 exports.getProductsList = (req, res, next) => {
   const page = +req.query.page || 1;
+  const addedToCart = req.query.addedToCart;
   let totalItems;
 
   Product.find()
@@ -29,6 +30,7 @@ exports.getProductsList = (req, res, next) => {
         nextPage: page + 1,
         previousPage: page - 1,
         lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE),
+        addedToCart: addedToCart,
       });
     })
     .catch((err) => {
@@ -102,7 +104,7 @@ exports.postCart = (req, res, next) => {
 
     Product.findById(prodId).then((product) => {
       req.user.addTocart(product);
-      res.redirect("/cart");
+      res.redirect("/products-list?addedToCart=true");
     });
   } catch (err) {
     const error = new Error(err);
